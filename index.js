@@ -2,15 +2,14 @@ const express = require('express')
 const mongoose = require('mongoose')
 const app = express()
 const port = 3000
+const { User } = require('./models/User') 
+const config = require('./config/key.js')
 
 app.use(express.json());
 app.use(express.urlencoded({
   extended: true
 }));
 
-const config = require('./config/key')
-
-const {User} = require('./models/User') 
 
 mongoose.connect(config.mongoURI)
   .then(() => console.log("Database Connected..."))
