@@ -4,7 +4,6 @@ const { User } = require('../models/User') ;
 let auth = (req, res, next) => {
   //Get the token from the cookie on client
   let token = req.cookies.x_auth;
-  console.log(token)
 
   //Decode Token with JWT
   User.findByToken(token, (err, user) => {

@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser')
 
 const { auth } = require('./middleware/auth') 
 const { User } = require('./models/User') 
-const config = require('./config/key.js')
+const config = require('./config/key.js.js')
 
 const port = 3000
 const app = express()
@@ -41,6 +41,7 @@ app.post('/api/users/login', (req, res) => {
   //Check if the user exists.
   User.findOne({ email: req.body.email }, (err, user) => {
     if(!user){
+      console.log("User Not Found.")
       return res.json({
         loginSuccess: false,
         message: "User Not Found."
@@ -76,6 +77,20 @@ app.get('/api/users/auth', auth, (req, res) => {
     name: req.user.name,
     role: req.user.role,
     image: req.user.image
+  })
+})
+
+//-------------Logout--------------
+app.get('/api/users/logout', auth, (req, res) => {
+  //Find a user with a token and delete the token.
+  User.findOneAndUpdate({ _id: req.user._id }
+    , {token: ""}
+    , (err, user) => {
+      if (err) return res.json({ success: false, err });
+      console.log("User Logged Out!")
+      return res.status(200).send({
+        success: true
+      })
   })
 })
 
