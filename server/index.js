@@ -2,15 +2,16 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
+const cors = require('cors')
 
 const { auth } = require('./middleware/auth') 
 const { User } = require('./models/User') 
-const config = require('./config/key.js.js')
+const config = require('./config/key.js')
 
-const port = 3000
 const app = express()
 
 //Middlewares
+app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({
@@ -19,11 +20,15 @@ app.use(express.urlencoded({
 
 //Database Connection
 mongoose.connect(config.mongoURI)
-  .then(() => console.log("Database Connected..."))
-  .catch(err => console.log(err))
+.then(() => console.log("Database Connected..."))
+.catch(err => console.log(err))
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
+});
+
+app.get('/api/hello', cors(), (req, res) => {
+  res.send("This is Axios!!!!")
 });
 
 //-------------Register-------------
@@ -47,19 +52,19 @@ app.post('/api/users/login', (req, res) => {
         message: "User Not Found."
       })
     }
-
+    
     //Compare the password with the one in the database.
     user.comparePassword(req.body.password, (err, isMatch) => {
       if (!isMatch) return res.json({ loginSuccess: false, message: "Incorrect Password" })
-
+      
       //If the password is correct, generate a token for the user.
       user.generateToken((err, user) => {
         if(err) return res.status(400).send(err)
-
+        
         //Save the token in a cookie
         res.cookie("x_auth", user.token)
-          .status(200)
-          .json({ loginSuccess: true, userId : user._id})
+        .status(200)
+        .json({ loginSuccess: true, userId : user._id})
       })
     })
   })
@@ -91,10 +96,12 @@ app.get('/api/users/logout', auth, (req, res) => {
       return res.status(200).send({
         success: true
       })
+    })
   })
-})
-
-
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`)
-})
+  
+  //-------------PORT--------------
+  const port = 3001;
+  
+  app.listen(port, () => {
+    console.log(`Listening on port ${port}`)
+  })
