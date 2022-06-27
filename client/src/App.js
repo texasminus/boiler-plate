@@ -6,6 +6,7 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import Auth from './hoc/auth'
 
 import LandingPage from './components/views/LandingPage/LandingPage'
 import LoginPage from './components/views/LoginPage/LoginPage';
@@ -16,9 +17,9 @@ function App() {
     <Router>
       <div>
         <Routes>
-          <Route exact path="/" element={ <LandingPage /> } />
-          <Route exact path="/login" element={ <LoginPage /> } />
-          <Route exact path="/register" element={ <RegisterPage /> } />
+          <Route exact path="/" element={ Auth(<LandingPage /> , null) }/>
+          <Route exact path="/login" element={ Auth(<LoginPage /> , false)}/>
+          <Route exact path="/register" element={ Auth(<RegisterPage /> , false)}/>
         </Routes>
       </div>
     </Router>
